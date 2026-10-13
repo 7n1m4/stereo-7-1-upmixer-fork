@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>7.1 Upmixer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="bg"></div>
+  <h2>Stereo → 7.1 Upmixer</h2>
+  <button id="toggle">Toggle Upmix</button>
+  <div class="channels">
+    <div class="channel">
+      <span class="channel-label">Front Left</span>
+      <div class="vu-meter"><div class="vu-fill" id="vu-L"></div></div>
+      <button class="mute-btn" data-channel="L">Mute</button>
+      <button class="solo-btn" data-channel="L">Solo</button>
+    </div>
+    <div class="channel">
+      <span class="channel-label">Front Right</span>
+      <div class="vu-meter"><div class="vu-fill" id="vu-R"></div></div>
+      <button class="mute-btn" data-channel="R">Mute</button>
+      <button class="solo-btn" data-channel="R">Solo</button>
+    </div>
+    <div class="channel">
+      <span class="channel-label">Front Center</span>
+      <div class="vu-meter"><div class="vu-fill" id="vu-C"></div></div>
+      <button class="mute-btn" data-channel="C">Mute</button>
+      <button class="solo-btn" data-channel="C">Solo</button>
+    </div>
+    <div class="channel">
+      <span class="channel-label">LFE (Subwoofer)</span>
+      <div class="vu-meter"><div class="vu-fill" id="vu-Sub"></div></div>
+      <button class="mute-btn" data-channel="Sub">Mute</button>
+      <button class="solo-btn" data-channel="Sub">Solo</button>
+    </div>
+    <div class="channel">
+      <span class="channel-label">Side Left</span>
+      <div class="vu-meter"><div class="vu-fill" id="vu-SL"></div></div>
+      <button class="mute-btn" data-channel="SL">Mute</button>
+      <button class="solo-btn" data-channel="SL">Solo</button>
+    </div>
+    <div class="channel">
+      <span class="channel-label">Side Right</span>
+      <div class="vu-meter"><div class="vu-fill" id="vu-SR"></div></div>
+      <button class="mute-btn" data-channel="SR">Mute</button>
+      <button class="solo-btn" data-channel="SR">Solo</button>
+    </div>
+    <div class="channel">
+      <span class="channel-label">Rear Left</span>
+      <div class="vu-meter"><div class="vu-fill" id="vu-BL"></div></div>
+      <button class="mute-btn" data-channel="BL">Mute</button>
+      <button class="solo-btn" data-channel="BL">Solo</button>
+    </div>
+    <div class="channel">
+      <span class="channel-label">Rear Right</span>
+      <div class="vu-meter"><div class="vu-fill" id="vu-BR"></div></div>
+      <button class="mute-btn" data-channel="BR">Mute</button>
+      <button class="solo-btn" data-channel="BR">Solo</button>
+    </div>
+  </div>
+  <div class="source-mutes">
+    <button id="mute-source-left">Mute Source Left</button>
+    <button id="mute-source-right">Mute Source Right</button>
+  </div>
+  <div class="channel-route">
+    <label for="channel-route-select">Channel Order:</label>
+    <select id="channel-route-select">
+      <option value="firefox">Firefox 7.1 — Side/Rear correct</option>
+      <option value="alsa">ALSA / device order — Side/Rear swapped</option>
+    </select>
+  </div>
+  <div class="theme-selector">
+    <label for="theme-select">Skin Theme:</label>
+    <select id="theme-select">
+      <option value="midnight-club">Midnight Club</option>
+      <option value="chilling-twilight">Chilling Twilight</option>
+      <option value="fresh-lemonade">Fresh Lemonade</option>
+      <option value="dark-chocolate">Dark Chocolate</option>
+      <option value="light-cappuccino">Light Cappuccino</option>
+      <option value="cherry-blossom">Cherry Blossom</option>
+      <option value="colourful-wonderland">Colourful Wonderland</option>
+    </select>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
