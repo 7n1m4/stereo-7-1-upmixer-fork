@@ -33,6 +33,14 @@
   const muteStates = new Array(8).fill(false);
   const soloStates = new Array(8).fill(false);
   const vuLevels = new Array(8).fill(0);
+  let vupaused = false;
+
+  // Per-logical-channel baseline gain: L, R, C, Sub, SL, SR, BL, BR.
+  // C and Sub each receive BOTH halves of the stereo signal, so they run at
+  // half gain to keep the overall level constant. Single source of truth shared
+  // by processElement (initial wiring) and updateChannelStates (mute/solo
+  // re-apply) — they must never disagree.
+  const BASE_GAINS = [1.0, 1.0, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0];
 
   // Create source gain nodes for left and right
   const sourceGainL = ctx.createGain();
@@ -85,15 +93,16 @@
     // 1: R
     sourceGains[1].connect(gains[1]);
 
-    // Center = Sub = 0.5*(L + R)
-    const centerGain = 0.5;
+    // Center = Sub = 0.5*(L + R). Both halves are connected below; the 0.5
+    // comes from BASE_GAINS so it can never drift from what
+    // updateChannelStates restores.
     sourceGains[0].connect(gains[2]);
     sourceGains[1].connect(gains[2]);
-    gains[2].gain.value = centerGain;
+    gains[2].gain.value = BASE_GAINS[2];
 
     sourceGains[0].connect(gains[3]);
     sourceGains[1].connect(gains[3]);
-    gains[3].gain.value = centerGain;
+    gains[3].gain.value = BASE_GAINS[3];
 
     // Stereo -> 7.1 upmix matrix (logical channel -> source contribution)
     //   0 L   = 1.0 * L
@@ -144,8 +153,14 @@
   updateVULevels();
 
   function updateChannelStates(newMuteStates, newSoloStates, newSourceMuteLeft, newSourceMuteRight) {
-    muteStates.splice(0, muteStates.length, ...newMuteStates);
-    soloStates.splice(0, soloStates.length, ...newSoloStates);
+    // Source-mute toggles (TOGGLE_SOURCE_MUTE_LEFT/RIGHT) pass null for the
+    // mute/solo arrays to mean "leave unchanged"; the spread would throw.
+    if (Array.isArray(newMuteStates)) {
+      muteStates.splice(0, muteStates.length, ...newMuteStates);
+    }
+    if (Array.isArray(newSoloStates)) {
+      soloStates.splice(0, soloStates.length, ...newSoloStates);
+    }
     // Apply source mutes
     sourceGains[0].gain.value = newSourceMuteLeft ? 0 : 1;
     sourceGains[1].gain.value = newSourceMuteRight ? 0 : 1;
@@ -155,10 +170,7 @@
       if (muteStates[i] || (soloStates.some(s => s) && !soloStates[i])) {
         gain.gain.value = 0;
       } else {
-        if (i === 2 || i === 3) {
-          gain.gain.value = 0.5; // Center and Sub
-        } else
-          gain.gain.value = 1.0;
+        gain.gain.value = BASE_GAINS[i];
       }
     }
     });
